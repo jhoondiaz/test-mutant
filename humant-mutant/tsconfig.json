@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "declaration": false,
+      "target": "es6",
+      "module": "commonjs",
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "rootDir": ".",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "outDir": "dist/",
+      "resolveJsonModule": true,
+      "skipLibCheck": true,
+      "types": ["jest", "node", "@types/jest"],
+      "typeRoots": [ "../node_modules/@types" ],
+      "allowJs": true
+    },
+    "include": [
+      "src/**/*.ts",
+      "tests/*.ts",
+      "tests/**/*.ts"
+    ],
+    "exclude": ["dist/", "node_modules/**/*"]
+  }

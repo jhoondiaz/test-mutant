@@ -1,0 +1,23 @@
+receivers:
+  otlp:
+    protocols:
+     grpc:
+     http:
+
+
+exporters:
+ # otlphttp:
+  #  endpoint:  https://a51fef704e6f549d2a8c3714878a1011-de5baf59b1ad3c22.elb.us-east-2.amazonaws.com
+  awsemf:
+  awsxray:
+  logging:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+     # exporters: [logging, awsxray,otlphttp]
+      exporters: [logging,awsxray]
+    metrics:
+      receivers: [otlp]
+      exporters: [awsemf]
