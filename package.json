@@ -1,0 +1,34 @@
+{
+    "name": "test-mutant",
+    "version": "1.1.0",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jhoondiaz/test-mutant/tree/master"
+    },
+    "scripts": {
+        "postinstall": "subpkg install",
+        "test": "subpkg test",
+        "audit": "subpkg run audit",
+        "build": "subpkg run build",
+        "sonar": "subpkg run sonar",
+        "lint": "subpkg run lint",
+        "lint:fix": "subpkg run lint:fix",
+        "prettier:list": "subpkg run prettier:list",
+        "prettier:write": "subpkg run prettier:write",
+        "prettier": "subpkg run prettier",
+        "customScript": "echo 'Developed'"
+    },
+    "subPackages": [
+        "human-mutant"
+    ],
+    "devDependencies": {
+        "subpackage": "^1.1.0"
+    },
+    "dependencies": {
+        "i": "^0.3.7",
+        "moment-timezone": "^0.5.33",
+        "npm": "^8.1.0",
+        "readline": "^1.3.0"
+    }
+}
