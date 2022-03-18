@@ -1,0 +1,18 @@
+{
+  "exclude": [
+    "coverage*",
+    "scripts/**/*",
+    "src/hexagonal/**/*e2e*"
+  ],
+  "check-coverage": true,
+  "per-file": false,
+  "lines": 100,
+  "statements": 100,
+  "functions": 100,
+  "branches": 100,
+  "reporter": [
+    "lcov",
+    "html",
+    "text-summary"
+  ]
+}
