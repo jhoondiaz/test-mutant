@@ -85,16 +85,21 @@ export class MutantServiceImp implements MutantService {
     for (let i = 0; i < dna.length; i++) {
       const element = dna[i];
       for (let j = 0; j < element.length; j++) {
-        const letter = element[j];
-        const promise = await Promise.all([
-          await this.searchVertical(dna, letter, i, j, sequence),
-          await this.searchHorizontal(dna, letter, i, j, sequence),
-          await this.searchObliqueLeftRight(dna, letter, i, j, sequence),
-          await this.searchObliqueRightLeft(dna, letter, i, j, sequence),
-        ]);
-        count += promise.filter((x) => x == true).length;
-        if (count >= 2) {
-          return true;
+        const posSelected = this.posSelected.find(
+          (x) => x.posi == i && x.posj == j
+        );
+        if (posSelected == undefined) {
+          const letter = element[j];
+          const promise = await Promise.all([
+            await this.searchVertical(dna, letter, i, j, sequence),
+            await this.searchHorizontal(dna, letter, i, j, sequence),
+            await this.searchObliqueLeftRight(dna, letter, i, j, sequence),
+            await this.searchObliqueRightLeft(dna, letter, i, j, sequence),
+          ]);
+          count += promise.filter((x) => x == true).length;
+          if (count >= 2) {
+            return true;
+          }
         }
       }
     }
