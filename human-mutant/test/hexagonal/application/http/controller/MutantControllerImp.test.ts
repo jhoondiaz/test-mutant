@@ -43,29 +43,4 @@ describe("Test Controller", () => {
       expect(error).toEqual(new Error("Error"));
     }
   });
-
-  test("should OK getHumanMutant", async () => {
-    jest.restoreAllMocks();
-    jest
-      .spyOn(service, "getHumanMutant")
-      .mockImplementation(() => Promise.resolve(event));
-    event.path = "/stats";
-    event.httpMethod = "GET";
-    const response = await controller.maindistributor(event);
-    expect(response).toBe(event);
-  });
-
-  test("Should ERROR getHumanMutant", async () => {
-    jest.restoreAllMocks();
-    jest.spyOn(service, "getHumanMutant").mockImplementation(() => {
-      throw new Error("Error");
-    });
-    try {
-      event.path = "/stats";
-      event.httpMethod = "GET";
-      await controller.maindistributor(event);
-    } catch (error) {
-      expect(error).toEqual(new Error("Error"));
-    }
-  });
 });

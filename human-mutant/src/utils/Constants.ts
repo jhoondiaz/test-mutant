@@ -14,13 +14,3 @@ export const HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
 };
-
-export const PATHS = {
-  pathMutants: "/mutants",
-  pathStats: "/stats",
-};
-
-export const METHODS = {
-  post: "POST",
-  get: "GET",
-};

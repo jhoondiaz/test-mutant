@@ -11,6 +11,7 @@ export class MutantServiceImp implements MutantService {
 
   public _dynamoConnector: DynamoConnector;
   private dnaFinal: Array<Array<string>> = [];
+  private posSelected: Array<any> = [];
 
   constructor(dynamoConnector: DynamoConnector) {
     this._dynamoConnector = dynamoConnector;
@@ -78,55 +79,9 @@ export class MutantServiceImp implements MutantService {
     }
   }
 
-  async getHumanMutant(): Promise<any> {
-    try {
-      const optionsGet = {
-        TableName: process.env.DYNAMO_TABLE,
-        IndexName: "type-index",
-        KeyConditionExpression: "#sts = :sts",
-        ExpressionAttributeNames: {
-          "#sts": "type",
-        },
-        ExpressionAttributeValues: {
-          ":sts": "Human",
-        },
-      };
-
-      const itemsHuman = await this._dynamoConnector.getInfoTable(optionsGet);
-
-      optionsGet.ExpressionAttributeValues[":sts"] = "Mutant";
-
-      const itemsMutants = await this._dynamoConnector.getInfoTable(optionsGet);
-
-      const countMutants = itemsMutants.Count;
-      const countHuman = itemsHuman.Count;
-
-      if (countHuman == 0 && countMutants == 0) {
-        throw new Error(`Actualmente la base de datos se encuentra vacia`);
-      }
-
-      const body = {
-        count_mutant_dna: countMutants,
-        count_human_dna: countHuman,
-        ratio: countMutants / countHuman,
-      };
-
-      const response = {
-        statusCode: 200,
-        headers: HEADERS,
-        body: JSON.stringify(body),
-        isBase64Encoded: false,
-      };
-
-      return response;
-    } catch (error) {
-      console.log(`General Error ${error.message}`, error);
-      throw error;
-    }
-  }
-
   async isMutant(dna: Array<Array<string>>): Promise<boolean> {
     const sequence = VALIDATIONS.sequence;
+    let count = 0;
     for (let i = 0; i < dna.length; i++) {
       const element = dna[i];
       for (let j = 0; j < element.length; j++) {
@@ -137,7 +92,8 @@ export class MutantServiceImp implements MutantService {
           await this.searchObliqueLeftRight(dna, letter, i, j, sequence),
           await this.searchObliqueRightLeft(dna, letter, i, j, sequence),
         ]);
-        if (promise.includes(true)) {
+        count += promise.filter((x) => x == true).length;
+        if (count >= 2) {
           return true;
         }
       }
@@ -152,16 +108,25 @@ export class MutantServiceImp implements MutantService {
     posj: number,
     sequence: number
   ): Promise<boolean> {
-    for (let k = 1; k < sequence; k++) {
-      posi++;
+    const arrPos: Array<any> = [];
+    for (let k = 0; k < sequence; k++) {
       if (posi >= dna.length) {
         return false;
       }
       const element = dna[posi][posj];
-      if (letter != element) {
+      const posSelected = this.posSelected.find(
+        (x) => x.posi == posi && x.posj == posj
+      );
+      if (letter != element || posSelected != undefined) {
         return false;
       }
+      arrPos.push({
+        posi: posi,
+        posj: posj,
+      });
+      posi++;
     }
+    this.posSelected = this.posSelected.concat(arrPos);
     return true;
   }
 
@@ -172,16 +137,25 @@ export class MutantServiceImp implements MutantService {
     posj: number,
     sequence: number
   ): Promise<boolean> {
-    for (let k = 1; k < sequence; k++) {
-      posj++;
+    const arrPos: Array<any> = [];
+    for (let k = 0; k < sequence; k++) {
       if (posj >= dna.length) {
         return false;
       }
       const element = dna[posi][posj];
-      if (letter != element) {
+      const posSelected = this.posSelected.find(
+        (x) => x.posi == posi && x.posj == posj
+      );
+      if (letter != element || posSelected != undefined) {
         return false;
       }
+      arrPos.push({
+        posi: posi,
+        posj: posj,
+      });
+      posj++;
     }
+    this.posSelected = this.posSelected.concat(arrPos);
     return true;
   }
 
@@ -192,18 +166,27 @@ export class MutantServiceImp implements MutantService {
     posj: number,
     sequence: number
   ): Promise<boolean> {
+    const arrPos: Array<any> = [];
     const dnaTam = dna.length;
-    for (let k = 1; k < sequence; k++) {
-      posi++;
-      posj++;
+    for (let k = 0; k < sequence; k++) {
       if (posi >= dnaTam || posj >= dnaTam) {
         return false;
       }
       const element = dna[posi][posj];
-      if (letter != element) {
+      const posSelected = this.posSelected.find(
+        (x) => x.posi == posi && x.posj == posj
+      );
+      if (letter != element || posSelected != undefined) {
         return false;
       }
+      arrPos.push({
+        posi: posi,
+        posj: posj,
+      });
+      posi++;
+      posj++;
     }
+    this.posSelected = this.posSelected.concat(arrPos);
     return true;
   }
 
@@ -214,18 +197,27 @@ export class MutantServiceImp implements MutantService {
     posj: number,
     sequence: number
   ): Promise<boolean> {
+    const arrPos: Array<any> = [];
     const dnaTam = dna.length;
-    for (let k = 1; k < sequence; k++) {
-      posi--;
-      posj++;
+    for (let k = 0; k < sequence; k++) {
       if (posi < 0 || posj >= dnaTam) {
         return false;
       }
       const element = dna[posi][posj];
-      if (letter != element) {
+      const posSelected = this.posSelected.find(
+        (x) => x.posi == posi && x.posj == posj
+      );
+      if (letter != element || posSelected != undefined) {
         return false;
       }
+      arrPos.push({
+        posi: posi,
+        posj: posj,
+      });
+      posi--;
+      posj++;
     }
+    this.posSelected = this.posSelected.concat(arrPos);
     return true;
   }
 
